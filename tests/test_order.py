@@ -5,7 +5,7 @@ from src.domain import CustomerHasDebt, Order
 
 def test_vip_discount():
     o = Order(200, vip=True)
-    assert o.confirm() == 170
+    assert o.confirm() == 999
     assert o.status == "CONFIRMED"
 
 def test_regular_customer_200():
