@@ -1,0 +1,33 @@
+import pytest
+
+from src.domain import CustomerHasDebt, Order
+
+
+def test_vip_discount():
+    o = Order(200, vip=True)
+    assert o.confirm() == 170
+    assert o.status == "CONFIRMED"
+
+def test_regular_customer_200():
+    """Prueba con total 200 y cliente regular (sin descuento)"""
+    o = Order(200, vip=False)
+    assert o.confirm() == 200
+    assert o.status == "CONFIRMED"
+
+def test_regular_no_discount():
+    assert Order(100).confirm() == 100
+
+def test_customer_debt():
+    with pytest.raises(CustomerHasDebt):
+        Order(100).confirm(customer_debt=50)
+
+@pytest.mark.parametrize("total", [0, -1])
+def test_invalid_total(total):
+    with pytest.raises(ValueError):
+        Order(total).confirm()
+
+def test_cannot_confirm_twice():
+    order = Order(100)
+    order.confirm()
+    with pytest.raises(ValueError, match="already confirmed"):
+        order.confirm()
